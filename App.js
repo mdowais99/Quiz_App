@@ -8,55 +8,88 @@ import {
 import Entypo from '@expo/vector-icons/Entypo';
 import * as SplashScreen from 'expo-splash-screen';
 import * as Font from 'expo-font';
-import Login from './components/Login';
+import Singup from './components/Signup';
 import Questions from './components/Questions';
+import Home from './components/Home';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NavigationContainer } from '@react-navigation/native';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { app, auth } from './config';
+import Signin from './components/Signin';
+import Dashboard from './components/Dashboard';
 
-// Keep the splash screen visible while we fetch resources
+
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
+  const [curUser, setCurUser] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      const uid = user.uid;
+      if (user.email === "owais@admin.com") {
+        setIsAdmin(true)
+      } else {
+        setIsAdmin(false)
+      }
+      setCurUser(uid)
+      setAppIsReady(true)
+    } else {
+      setAppIsReady(true)
+      setCurUser(null)
+    }
+  });
+
+
 
   useEffect(() => {
-    async function prepare() {
-      try {
-        // Pre-load fonts, make any API calls you need to do here
-        await Font.loadAsync(Entypo.font);
-        // Artificially delay for two seconds to simulate a slow loading
-        // experience. Please remove this if you copy and paste the code!
-        await new Promise(resolve => setTimeout(resolve, 1000));
-      } catch (e) {
-        console.warn(e);
-      } finally {
-        // Tell the application to render
-        setAppIsReady(true);
+    async function abc() {
+      if (appIsReady) {
+        await SplashScreen.hideAsync();
       }
     }
+    abc()
+  }, [appIsReady])
 
-    prepare();
-  }, []);
-
-  const onLayoutRootView = useCallback(async () => {
-    if (appIsReady) {
-      // This tells the splash screen to hide immediately! If we call this after
-      // `setAppIsReady`, then we may see a blank screen while the app is
-      // loading its initial state and rendering its first pixels. So instead,
-      // we hide the splash screen once we know the root view has already
-      // performed layout.
-      await SplashScreen.hideAsync();
-    }
-  }, [appIsReady]);
-
-  if (!appIsReady) {
-    return null;
-  }
-
+  const Stack = createNativeStackNavigator();
   return (
-    <View
-      onLayout={onLayoutRootView}>
-      {/* <Login /> */}
-      <Questions />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator>
+        {curUser == null ? (
+          <>
+            <Stack.Screen
+              name="Signin"
+              component={Signin}
+              options={{
+                title: 'Signin',
+              }}
+            />
+            <Stack.Screen
+              name="Signup"
+              component={Singup}
+              options={{
+                title: 'Singup',
+              }}
+            />
+          </>
+        ) : (
+          // User is signed in
+          <>
+            {isAdmin ?
+              <Stack.Screen name="Dashboard" component={Dashboard} />
+              :
+              <>
+                <Stack.Screen name="Home" component={Home} />
+                <Stack.Screen name="Questions" component={Questions} />
+              </>
+            }
+          </>
+        )}
+      </Stack.Navigator>
+
+    </NavigationContainer>
+
   );
 }
 
