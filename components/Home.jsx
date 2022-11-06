@@ -26,6 +26,26 @@ const Home = ({ navigation }) => {
                 options: ['1', '2', '3'],
                 right: '3'
             }
+        ],
+        Maths: [
+            {
+                id: 1,
+                question: 'What is triangle?',
+                options: ['shape', 'human', 'animal'],
+                right: 'shape'
+            },
+            {
+                id: 2,
+                question: 'How many sides of a triangle?',
+                options: ['1', '2', '3', '4'],
+                right: '3'
+            },
+            {
+                id: 3,
+                question: 'How many sides of a circle?',
+                options: ['0', '2', '3', '4'],
+                right: '0'
+            },
         ]
     }
     return (
@@ -39,7 +59,7 @@ const Home = ({ navigation }) => {
             />
             {Object.keys(questionTypes).map(question => (
                 <TouchableOpacity style={{ borderWidth: 1, borderColor: 'black', marginBottom: 10, padding: 10 }} key={question} onPress={() =>
-                    navigation.navigate('Questions', { type: question })
+                    navigation.navigate('Questions', { questionType: question, selectedQuestion: questionTypes[question] })
                 }>
                     <Text>Quiz: {question}</Text>
                     <Text> Questions: {questionTypes[question].length} </Text>

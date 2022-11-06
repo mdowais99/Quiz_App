@@ -1,20 +1,12 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import {
-  Text, View, Image,
-  TextInput,
-  Button,
-  TouchableOpacity,
-} from 'react-native';
-import Entypo from '@expo/vector-icons/Entypo';
+import React, { useEffect, useState } from 'react';
 import * as SplashScreen from 'expo-splash-screen';
-import * as Font from 'expo-font';
 import Singup from './components/Signup';
 import Questions from './components/Questions';
 import Home from './components/Home';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
-import { app, auth } from './config';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from './config';
 import Signin from './components/Signin';
 import Dashboard from './components/Dashboard';
 

@@ -1,11 +1,10 @@
-import { getAuth, signOut } from 'firebase/auth'
+import {  signOut } from 'firebase/auth'
 import { collection, getDocs, getFirestore, query } from 'firebase/firestore'
 import React, { useEffect, useState } from 'react'
 import { Button, Text, View } from 'react-native'
 import { auth, db } from '../config'
 const Dashboard = () => {
     const [allScores, setAllScores] = useState([]);
-    console.log(allScores)
     useEffect(() => {
         const fetchScore = async () => {
             try {

@@ -7,30 +7,7 @@ const Questions = ({ navigation, route }) => {
     const [questionCount, setQuestionCount] = useState(0);
     const [currentAnswer, setCurrentAnswer] = useState("");
     const userAnswers = useRef([]);
-    const questionTypes = {
-        GK: [
-            {
-                id: 1,
-                question: 'Who is owais',
-                options: ["Male", "Female"],
-                right: 'Female'
-            },
-            {
-                id: 2,
-                question: 'What does He do?',
-                options: ["Bakchodi", "Bht zyada bakchodi"],
-                right: "Bht zyada bakchodi"
-            }
-        ],
-        Science: [
-            {
-                id: 1,
-                question: 'How many branches of science?',
-                options: ['1', '2', '3'],
-                right: '3'
-            }
-        ]
-    }
+
     const nextHandler = (answer) => {
         if (currentAnswer) {
             setQuestionCount(questionCount + 1);
@@ -45,21 +22,21 @@ const Questions = ({ navigation, route }) => {
     const submitHanlder = async (answer) => {
         if (currentAnswer) {
             userAnswers.current.push(answer === currentAnswer);
-            const totalQuestions = questionTypes[route.params.type].length;
+            const totalQuestions = route.params.selectedQuestion.length;
             const rightAnswers = userAnswers.current.filter(a => a === true).length
-            const percentage = (rightAnswers * 100) / totalQuestions;
+            const percentage = Math.round((rightAnswers * 100) / totalQuestions);
             try {
                 const docRef = await addDoc(collection(db, "scoreboard"), {
                     user: user.email,
                     score: percentage,
-                    quiz: route.params.type,
+                    quiz: route.params.questionType,
                     status: percentage >= 70 ? "pass" : "fail"
                 });
-                console.log("Document written with ID: ", docRef.id);
+                console.log("Document written with ID: ", docRef);
             } catch (e) {
                 console.error("Error adding document: ", e);
             }
-            Alert.alert('Answers', `${rightAnswers}/${totalQuestions}.\n Your percentage is ${percentage}%`, [
+            Alert.alert('Answers', `${rightAnswers}/${totalQuestions}.\n Your percentage is ${percentage}%.\n You are ${percentage >= 70 ? "pass" : "fail"}`, [
                 { text: 'OK', onPress: () => navigation.navigate('Home') },
             ])
         } else {
@@ -74,11 +51,11 @@ const Questions = ({ navigation, route }) => {
                 paddingHorizontal: 20
             }}
         >
-            <Text style={{ textAlign: 'center', fontSize: 30 }} > Quiz: {route.params.type} </Text>
+            <Text style={{ textAlign: 'center', fontSize: 30 }} > Quiz: {route.params.questionType} </Text>
             <Text>
-                Q#{questionTypes[route.params.type][questionCount].id}: {questionTypes[route.params.type][questionCount].question}
+                Q#{route.params.selectedQuestion[questionCount].id}: {route.params.selectedQuestion[questionCount].question}
             </Text>
-            {questionTypes[route.params.type][questionCount].options.map(option => (
+            {route.params.selectedQuestion[questionCount].options.map(option => (
                 <View key={option} >
                     <Text> {option}</Text>
                     <TouchableOpacity style={styles.outer} onPress={() => setCurrentAnswer(option)}>
@@ -86,15 +63,15 @@ const Questions = ({ navigation, route }) => {
                     </TouchableOpacity>
                 </View>
             ))}
-            {questionCount === questionTypes[route.params.type].length - 1 ?
+            {questionCount === route.params.selectedQuestion.length - 1 ?
                 <Button
                     title="Submits"
-                    onPress={() => submitHanlder(questionTypes[route.params.type][questionCount].right)}
+                    onPress={() => submitHanlder(route.params.selectedQuestion[questionCount].right)}
                 />
                 :
                 <Button
                     title="Next"
-                    onPress={() => nextHandler(questionTypes[route.params.type][questionCount].right)}
+                    onPress={() => nextHandler(route.params.selectedQuestion[questionCount].right)}
                 />
             }
 

@@ -4,14 +4,12 @@ import {
   StyleSheet,
   Text,
   View,
-  Image,
   TextInput,
-  Button,
   TouchableOpacity,
   Alert,
 } from "react-native";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import { app, auth } from "../config";
+import {  createUserWithEmailAndPassword } from "firebase/auth";
+import {  auth } from "../config";
 export default function Signup({navigation}) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

@@ -4,9 +4,7 @@ import {
     StyleSheet,
     Text,
     View,
-    Image,
     TextInput,
-    Button,
     TouchableOpacity,
     Alert,
 } from "react-native";
@@ -29,9 +27,6 @@ export default function Signin({ navigation }) {
     }
     return (
         <View style={styles.container}>
-
-            {/* <Image style={styles.image} source={require(./login-log.png")} /> */}
-
             <StatusBar style="auto" />
             <View style={styles.inputView}>
                 <TextInput
